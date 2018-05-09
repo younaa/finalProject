@@ -2,19 +2,21 @@
 
 <html lang="en">
   <head>
-    <title>Ship template</title>
+    <title>Cloud-9</title>
     <style>
       body {
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 100vh;
+        height: 95vh;
         margin: 0;
-        background: #000;
+        background: white;
       }
+/*
       canvas { 
         border: 1px solid #fff; 
       }
+*/
     </style>
   </head>
   <body>
@@ -24,8 +26,8 @@
     <script>
         
       "use strict";
-        const height = 400;
-        const width = 400;
+        const height = 750;
+        const width = 1000;
         const dragAmount = 0.95;
         const playerAccelerationAmount = 150;
         const playerRotationAmount = 600;
@@ -36,6 +38,8 @@
         var text;
         var weapon;
         var fireButton;
+        var enemies;
+        var numchildren;
 
         const game = new Phaser.Game(width, height, Phaser.AUTO, '', { 
             preload: preload, create: create, update: update 
@@ -43,12 +47,25 @@
         
         function preload() {
             game.load.image("player", "assets/cloud.png");
-            game.load.image("zap", "assets/lightningbolt2.png");
+//            game.load.image("zap", "assets/lightningbolt2.png");
             game.load.image("bullet", "assets/lightningbolt2.png");
+            game.load.image("background", "assets/grass.jpeg");
+            game.load.image("enemy", "assets/factory.png");
         }
 
         function create() { 
       
+            this.tileSprite = game.add.tileSprite(0, 0, 1000, 750, 'background');
+            
+            enemies = game.add.group();
+            enemies.enableBody = true;
+            enemies.physicsBodyType = Phaser.Physics.ARCADE;
+            
+            for (var i = 0; i<10; i++){
+                createEnemy();
+            }
+            numchildren = enemies.length;
+            
             // Create the player object
             player = game.add.sprite(width / 2, height / 2, "player");
             player.anchor.set(0.5);
@@ -112,8 +129,28 @@
             if (fireButton.isDown){
                 weapon.fire();
             }
+            
+            game.physics.arcade.overlap(weapon.bullets, enemies, killEnemy, null, this);
 
             game.world.wrap(player, 16);
+        }
+        function createEnemy(){
+            enemies.create(game.world.randomX, game.world.randomY, "enemy").body.immovable=true;
+//            enemies.create(game.world.randomX, game.world.randomY,'enemy').body.immovable = true;
+        }
+        
+        function killEnemy(bullet, enemy){
+            enemy.kill();
+    
+            numchildren-=1;
+
+            if (numchildren===0) {
+                console.log("here");
+                alert("Congratulations! You demolished all the factories!");
+                 game.state.restart();
+
+
+            }
         }
 
         function render() {

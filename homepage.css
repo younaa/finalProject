@@ -1,12 +1,9 @@
 body{
-    
-    
-    
-background-image:url(pixel-wallpaper-background-8221-8538-hd-wallpapers);
-    background-size:cover;
-    
-font-family:fantasy;
-    text-align: center
-    
+    font-family:fantasy;
+    text-align: center;
 
 } 
+
+#id{
+    text-align: center;
+}
